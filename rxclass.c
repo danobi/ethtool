@@ -12,14 +12,6 @@
 #include <arpa/inet.h>
 #include "internal.h"
 
-static void invert_flow_mask(struct ethtool_rx_flow_spec *fsp)
-{
-	size_t i;
-
-	for (i = 0; i < sizeof(fsp->m_u); i++)
-		fsp->m_u.hdata[i] ^= 0xFF;
-}
-
 static void rxclass_print_ipv4_rule(__be32 sip, __be32 sipm, __be32 dip,
 				    __be32 dipm, u8 tos, u8 tosm)
 {
@@ -103,8 +95,6 @@ static void rxclass_print_nfc_rule(struct ethtool_rx_flow_spec *fsp,
 	fprintf(stdout,	"Filter: %d\n", fsp->location);
 
 	flow_type = fsp->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RSS);
-
-	invert_flow_mask(fsp);
 
 	switch (flow_type) {
 	case TCP_V4_FLOW:
